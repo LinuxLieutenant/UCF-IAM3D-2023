@@ -3,35 +3,28 @@
  
 //--------------------PWM PIN DESIGNATIONS-------------------//
 //PWM Pins on the mega: (2-13, 44-46)
-
 //Rudder
 int rudderPin = 2;
 //Claw
 int clawPin = 3;
 // Motor A pins (Inflation, 2 motors)
-int enA = 4;
-int in1 = 5;
-int in2 = 6;
-// Motor B pins (Left)
-int enB = 7;
-int in3 = 8;
-int in4 = 9;
-// Motor C pins (Right)
-int enC = 10;
-int in5 = 11;
-int in6 = 12;
+int inflatorPin = 4;
 //Motor D pins (Thrust)
-int enD = 44;
-int in7 = 45;
-int in8 = 46;
-
+int thrustPin = 5;
+// Motor B pins (Left)
+int leftPin = 6;
+// Motor C pins (Right)
+int rightPin = 7;
 //------------------------------------------------------------//
 
-
-// Create iBus Object
+// Create Servo, Motor, Ibus Objects
 IBusBM ibus;
 Servo rudder;
 Servo claw;
+Servo inflator;
+Servo thrust;
+Servo left;
+Servo right;
  
 // Read the number of a given channel and convert to the range provided.
 // If the channel is off, return the default value
@@ -51,36 +44,25 @@ bool readSwitch(byte channelInput, bool defaultValue) {
 void setup() {
   // Start serial monitor
   Serial.begin(115200);
-
-  rudder.attach(rudderPin);   //Attach the rudder servo to pin 2 digital
-  claw.attach(clawPin);     //Attach the claw servo to pin 3 digital
- 
   // Attach iBus object to serial port
-  ibus.begin(Serial1);
+  ibus.begin(Serial);
 
-  //----------For the motor pins-------------//
-  pinMode(enA, OUTPUT);
-	pinMode(enB, OUTPUT);
-  pinMode(enC, OUTPUT);
-	pinMode(enD, OUTPUT);
-	pinMode(in1, OUTPUT);
-	pinMode(in2, OUTPUT);
-	pinMode(in3, OUTPUT);
-	pinMode(in4, OUTPUT);
-	pinMode(in5, OUTPUT);
-	pinMode(in6, OUTPUT);
-	pinMode(in7, OUTPUT);
-	pinMode(in8, OUTPUT);
-  // Turn off motors - Initial state
-	digitalWrite(in1, LOW);
-	digitalWrite(in2, LOW);
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
-  digitalWrite(in5, LOW);
-  digitalWrite(in6, LOW);
-  digitalWrite(in7, LOW);
-  digitalWrite(in8, LOW);
-  //----------------------------------------//
+  //Attach servos and Electronic Speed Controllers (ESCs)
+  rudder.attach(rudderPin);                //Attach the rudder servo to pin 2 digital
+  claw.attach(clawPin);                    //Attach the claw servo to pin 3 digital
+  inflator.attach(inflatorPin,1000,2000);  //Attach the inflator motor to pin 4 digital
+  thrust.attach(thrustPin,1000,2000);      //Attach the thrust motor to pin 5 digital
+  left.attach(leftPin,1000,2000);          //Attach the left motor to pin 6 digital
+  right.attach(rightPin,1000,2000);        //Attach the right motor to pin 7 digital
+
+  //Set initial throttle input for the ESCs to 0
+  inflator.write(0);
+  thrust.write(0);
+  left.write(0);
+  right.write(0);
+
+  //This delay is very important. the ESCs must have 0 throttle input for at least 1 second
+  delay(1000); 
 }
  
 void loop() {
@@ -107,12 +89,14 @@ void loop() {
   //-------THIS IS THE CODE TO EDIT TO ADD/MODIFY THE SERVO AND MOTOR VALUES--------------------------
   rudder.write(readChannel(0,0,180,0));  //This is the left stick lef/right
   claw.write(readChannel(5,0,180,0));   //This is the top right dial (channel 6)
-  inflation();
-  speed();
+  inflator.write(readChannel(4,0,180,0));
+  thrust.write(readChannel(3,0,180,0));
+  left.write(readChannel(2,0,180,0));
+  right.write(readChannel(1,0,180,0));
 
   delay(10);
 }
-
+/*
 void inflation() {
 	// Turn on motors
 	digitalWrite(in1, LOW);
@@ -151,3 +135,4 @@ void speed() {
 	digitalWrite(in7, LOW);
 	digitalWrite(in8, LOW);
 }
+*/

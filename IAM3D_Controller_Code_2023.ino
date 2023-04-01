@@ -1,3 +1,7 @@
+/*
+  This is the code for 2023 UCF ASME IAM3D competition Hovercraft Controller
+  You will need a FLYSKY FS-i6 controller and FS-iA6B reciever as well as 2 micro servos, an arduino (any will work), 4 speed controllers and at least 4 brushless dc motors.
+*/
 #include <IBusBM.h>
 #include <Servo.h>
  
@@ -84,55 +88,22 @@ void loop() {
   Serial.print("Ch6: ");
   Serial.print(readSwitch(5, false));
   Serial.println();
-  
-
+  /*
+  To assign a channel in the code, take the channel number and subtract 1 (e.g. Channel 1 would be addressed as 0).
+  Channel 1 is right Stick left/right
+  Channel 2 is right stick up/down
+  Channel 3 is left stick up/down
+  Channel 4 is left stick left/right 
+  channel 5 is left dial
+  channel 6 is right dial
+  */
   //-------THIS IS THE CODE TO EDIT TO ADD/MODIFY THE SERVO AND MOTOR VALUES--------------------------
-  rudder.write(readChannel(0,0,180,0));  //This is the left stick lef/right
-  claw.write(readChannel(5,0,180,0));   //This is the top right dial (channel 6)
-  inflator.write(readChannel(4,0,180,0));
-  thrust.write(readChannel(3,0,180,0));
-  left.write(readChannel(2,0,180,0));
-  right.write(readChannel(1,0,180,0));
+  rudder.write(readChannel(0,0,180,0));   //0 is the right stick lef/right (channel 1)
+  claw.write(readChannel(5,0,180,0));     //5 is the top right dial (channel 6)
+  inflator.write(readChannel(4,0,180,0)); //4 is the top left dial (channel 5)
+  thrust.write(readChannel(1,0,180,0));   //1 is right stick up/down (channel 2)
+  left.write(readChannel(3,-180,0,0));    //3 is left stick left/right (channel 4)
+  right.write(readChannel(3,0,180,0));     //3 is left stick left/right (channel 4)
 
-  delay(10);
+  delay(0);
 }
-/*
-void inflation() {
-	// Turn on motors
-	digitalWrite(in1, LOW);
-	digitalWrite(in2, HIGH);
-
-	analogWrite(enA, readChannel(4,0,100,0)); //channel 5
-	
-	// Now turn off motors
-	digitalWrite(in1, LOW);
-	digitalWrite(in2, LOW);
-}
-void direction() {
-	// Turn on motors
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, HIGH);
-  digitalWrite(in5, LOW);
-	digitalWrite(in6, HIGH);
-
-	analogWrite(enB, readChannel(3,-100,100,0)); //channel 4
-	analogWrite(enC, readChannel(3,-100,100,0)); //channel 4
-	
-	// Now turn off motors
-	digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
-  digitalWrite(in3, LOW);
-	digitalWrite(in4, LOW);
-}
-void speed() {
-	// Turn on motors
-	digitalWrite(in7, LOW);
-	digitalWrite(in8, HIGH);
-
-	analogWrite(enD, readChannel(1,-100,100,0)); //channel 2
-	
-	// Now turn off motors
-	digitalWrite(in7, LOW);
-	digitalWrite(in8, LOW);
-}
-*/

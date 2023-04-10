@@ -41,7 +41,7 @@ int readChannel(byte channelInput, int minLimit, int maxLimit, int defaultValue)
 // Read the channel and return a boolean value
 bool readSwitch(byte channelInput, bool defaultValue) {
   int intDefaultValue = (defaultValue) ? 100 : 0;
-  int ch = readChannel(channelInput, 0, 100, intDefaultValue);
+  int ch = readChannel(channelInput, 0, 100, intDefaultValue); //defalt max is 100, default min is 0
   return (ch > 50);
 }
  
@@ -98,12 +98,14 @@ void loop() {
   channel 6 is right dial
   */
   //-------THIS IS THE CODE TO EDIT TO ADD/MODIFY THE SERVO AND MOTOR VALUES--------------------------
-  rudder.write(readChannel(0,0,180,0));   //0 is the right stick lef/right (channel 1)
-  claw.write(readChannel(5,0,180,0));     //5 is the top right dial (channel 6)
-  inflator.write(readChannel(4,0,180,0)); //4 is the top left dial (channel 5)
-  thrust.write(readChannel(1,0,180,0));   //1 is right stick up/down (channel 2)
-  left.write(readChannel(3,-180,0,0));    //3 is left stick left/right (channel 4)
-  right.write(readChannel(3,0,180,0));     //3 is left stick left/right (channel 4)
-
+  rudder.write(map(readChannel(0,10,1000,0),10,1000,10,180));   //0 is the right stick lef/right (channel 1) pin 2  
+  claw.write(map(readChannel(5,10,1000,0),10,1000,10,180));     //5 is the top right dial (channel 6) pin 3
+  inflator.write(map(readChannel(4,10,1000,0),10,1000,10,180)); //4 is the top left dial (channel 5) pin 4
+  thrust.write(map(readChannel(1,10,1000,0),10,1000,10,180));   //1 is right stick up/down (channel 2) pin 5
+  //left.write(readChannel(3,-180,180,0));    //3 is left stick left/right (channel 4) pin 6
+  right.write(map(readChannel(3,10,1000,0),10,1000,10,180));     //3 is left stick left/right (channel 4) pin 7
+  //This if statement makes it so the left motor and the right motor are controlled by the same axis
+  if (readChannel(3, -1000, 1000, 0)<0) 
+    left.write(map(readChannel(3,-1000,-10,0), -10, -1000, 10, 180));
   delay(0);
 }
